@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "os.h": "c",
+        "printf.h": "c"
+    }
+}
