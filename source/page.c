@@ -2,14 +2,15 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-16 11:39:24
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-10-26 19:31:50
- * @FilePath: /wei/riscv-operating-system-mooc/code/os/my_code/page.c
+ * @LastEditTime: 2024-11-03 22:58:51
+ * @FilePath: /my_code/source/page.c
  * @Description: 
  * @
  * @Copyright (c) 2024 by  weiqiang scuec_weiqiang@qq.com , All Rights Reserved. 
 ***************************************************************/
 #include "platform.h"
 #include "printf.h"
+#include "types.h"
 
 extern addr_t TEXT_START;
 extern addr_t TEXT_END;

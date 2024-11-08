@@ -1,6 +1,14 @@
 {
     "files.associations": {
         "os.h": "c",
-        "printf.h": "c"
-    }
+        "printf.h": "c",
+        "types.h": "c",
+        "page.h": "c",
+        "compare": "c",
+        "type_traits": "c",
+        "platform.h": "c",
+        "typeinfo": "c",
+        "list.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

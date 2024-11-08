@@ -2,8 +2,8 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-25 15:57:18
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-10-27 20:27:45
- * @FilePath: /wei/riscv-operating-system-mooc/code/os/my_code/printf.c
+ * @LastEditTime: 2024-11-07 15:22:35
+ * @FilePath: /my_code/source/printf.c
  * @Description: 
  * @
  * @Copyright (c) 2024 by  weiqiang scuec_weiqiang@qq.com , All Rights Reserved. 
@@ -18,10 +18,10 @@ static char printf_buff[__PBUFF_SIZE];//输出缓冲区1k字节
 
 /***************************************************************
  * @description: 将一个无符号整型数转换为字符串
- * @param {char*} str [in/out]:  
+ * @param {char*} str [out]:  字符串
  * @param {unsigned int} pos [in]:  从<str>的哪个位置开始写入字符串
- * @param {int} num [in/out]:  需要转化的数字
- * @param {int} decimal [in/out]:  进制,可选2，10，16
+ * @param {int} num [in]:  需要转化的数字
+ * @param {int} decimal [in]:  进制,可选2，10，16
  * @return {int} 返回转化后字符串长度
 ***************************************************************/
 int num2char(char* str,unsigned int pos,unsigned int num,int decimal)
@@ -190,15 +190,21 @@ int _vprintf(const char* str,va_list vl)
 
 
 /***************************************************************
- * @description: 
- * @param {char*} str [in/out]:  
+ * @description: 格式化输出
+ * @param {char*} str [in]:  
  * @return {*}
 ***************************************************************/
-int printf(const char* str, ...)
+int printf(const char *str, ...)
 {
     va_list vl;
     va_start(vl,str);
     int n = _vprintf(str,vl);
     va_end(vl);
     return n;
+}
+
+int panic(const char *str)
+{
+    printf("panic:%s\n",str);
+    while(1){}
 }

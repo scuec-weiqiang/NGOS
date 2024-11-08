@@ -11,6 +11,7 @@ SECTIONS
 {
     .text : {
         PROVIDE(_text_start = .);
+        *(.text.entry)
         *(.text .text.*)
         PROVIDE(_text_end = .);
     } >ram
