@@ -1,22 +1,16 @@
 /***************************************************************
  * @Author: weiqiang scuec_weiqiang@qq.com
- * @Date: 2024-10-16 09:43:32
+ * @Date: 2024-11-12 23:46:59
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 19:59:11
- * @FilePath: /my_code/include/os.h
+ * @LastEditTime: 2024-11-13 19:57:40
+ * @FilePath: /my_code/include/exception.h
  * @Description: 
  * @
  * @Copyright (c) 2024 by  weiqiang scuec_weiqiang@qq.com , All Rights Reserved. 
 ***************************************************************/
-#ifndef OS_H
-#define OS_H
+#ifndef __EXCEPTION_H
+#define __EXCEPTION_H
 
-#include "platform.h"
-#include "printf.h"
-#include "page.h"
-#include "sched.h"
-#include "exception.h"
-#include "hwtimer.h"
-#include "clint.h"
-
+extern void extern_interupt_init(uint32_t hart,uint32_t iqrn,uint32_t priority);
+extern void timer_interupt_init();
 #endif

@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-11-01 10:50:01
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-06 00:19:22
+ * @LastEditTime: 2024-11-13 14:01:28
  * @FilePath: /my_code/include/list.h
  * @Description: 
  * @
@@ -101,7 +101,7 @@ __SELF __INLINE void __list_splice(list_t *head,list_t *node)
  * @param {list_t} *head [in]:  头节点
  * @return {*}
 ***************************************************************/
-STATIC_INLINE  void list_add(list_t *node,list_t *head)
+STATIC_INLINE  void list_add(list_t *head,list_t *node)
 {
     __list_add(node,head,head->next);
 }
@@ -113,7 +113,7 @@ STATIC_INLINE  void list_add(list_t *node,list_t *head)
  * @param {list_t} *head [in]:  头节点
  * @return {*}
 ***************************************************************/
-STATIC_INLINE void list_add_tail(list_t *node,list_t *head)
+STATIC_INLINE void list_add_tail(list_t *head,list_t *node)
 {
     __list_add(node,head->prev,head);
 }
@@ -138,7 +138,7 @@ STATIC_INLINE void list_del(list_t *node)
  * @param {list_t} *head [in]:  头节点
  * @return {*}
 ***************************************************************/
-STATIC_INLINE void list_mov(list_t *node,list_t *head)
+STATIC_INLINE void list_mov(list_t *head,list_t *node)
 {
     __list_del(node->prev,node->next);
     __list_add(node,head,head->next);
@@ -151,7 +151,7 @@ STATIC_INLINE void list_mov(list_t *node,list_t *head)
  * @param {list_t} *head [in]:  头节点
  * @return {*}
 ***************************************************************/
-STATIC_INLINE void list_mov_tail(list_t *node,list_t *head)
+STATIC_INLINE void list_mov_tail(list_t *head,list_t *node)
 {
     __list_del(node->prev,node->next);
     __list_add(node,head->prev,head);

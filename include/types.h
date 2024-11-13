@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-14 09:17:08
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-04 13:55:23
+ * @LastEditTime: 2024-11-09 20:19:50
  * @FilePath: /my_code/include/types.h
  * @Description: 
  * @
@@ -59,7 +59,7 @@
 
     #define __SELF          static  
     #define __INLINE        inline  
-    #define STATIC_INLINE static inline  
+    #define STATIC_INLINE   static inline  
     
     typedef enum
     {

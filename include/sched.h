@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-31 16:30:19
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-03 23:19:15
+ * @LastEditTime: 2024-11-13 16:05:37
  * @FilePath: /my_code/include/sched.h
  * @Description: 
  * @
@@ -13,7 +13,8 @@
 
 #include "types.h"
 
+extern void sched_init();
 extern void task_create(void (*task)(void));
 extern void task_run();
-extern uint32_t current;
+extern void task_delay(volatile int count);
 #endif

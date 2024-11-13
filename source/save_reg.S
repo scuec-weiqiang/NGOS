@@ -1,6 +1,10 @@
+
+#ifndef __SAVE_REG_H
+#define __SAVE_REG_H
+
 #define LOAD        lw
 #define STORE       sw
-#define REG_SIZE    4 
+#define REG_SIZE    4
 
 .macro store_reg addr
 #   STORE zero,0*REG_SIZE(\addr)   zero值不会变，存储没有意义
@@ -73,33 +77,12 @@
     LOAD t6 ,31*REG_SIZE(\addr)
 .endm
 
-.text
-.global _switch_to 
-_switch_to:
-# 存储当前任务上下文内容的结构体的地址 保存在mscratch里
-# 交换mscratch与t6的值（因为mscratch属于csr寄存器，无法直接用来寻址，必须用通用寄存器作为中介，这里我们选t6作为中介）
-    csrrw t6,mscratch,t6 
-    beq t6, zero, 1f # 如果mscratch值为0，则代表当前没有任务上下文需要保存（例如：第一个任务还没开始执行）
-    store_reg t6
-    csrr t5,mscratch #把原来t6的值放入t5
-    STORE t5,31*REG_SIZE(t6)#再把原来t6的值存入结构体中
-# 至此保存当前任务上下文完成，下面恢复下一个任务的上下文
 
-# _switch_to会在sched.c文件中声明为一个函数 void _switch_to(reg_context_t* next)
-# 参数reg_context_t* next指向保存着下个任务上下文内容的地址，它通过寄存器a0传递
-1:   
-    csrw mscratch ,a0 #下个任务上下文内容的地址保存进mscratch
-    mv t6,a0 
-    load_reg t6 
-    #注意：这里如果不用t6（比如直接用a0）,那么在执行宏 load_reg a0 时会执行 LOAD a0 ,18*REG_SIZE(a0)，
-    #从此之后a0值会被覆盖掉，后面的操作都是从错误的地址加载值到寄存器，因此要保证宏load_reg的参数对应的寄存器最后被覆盖
-    ret
-  
-.global _trap_handler
-_trap_handler:
+
+.macro interrupt_save
     csrrw t6,mscratch,t6
     bne t6, zero, 1f //mscratch值是正常的，直接跳转到保存上下文的地方
-    
+ 
     addi sp,sp,-4
     sw a0,(sp)//暂时先将a0压栈，他要用来传参
 
@@ -110,23 +93,19 @@ _trap_handler:
 
     lw a0,(sp)//将a0出栈
     addi sp,sp,4
-1:    
+
+    1:
     store_reg t6
     csrr t5,mscratch
     STORE t5,31*REG_SIZE(t6)#保存t6的值
     csrw mscratch,t6    #保持mscratch值不变
 
-    csrr a0,mcause
-    csrr a1,mtval
-    call trap_handler 
-    csrr t6,mepc
-    # la t6,start_kernel
-    la t6,_start
-    # addi t6,t6,4# 退出trap执行下一条指令
-    csrw mepc ,t6
+.endm
 
+.macro interrupt_load
     csrr t6,mscratch
     load_reg t6
-    mret
+.endm
 
-.end
+
+#endif

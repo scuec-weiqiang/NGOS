@@ -13,8 +13,7 @@ CFLAGS = 	-nostdlib -fno-builtin 		\
 
 #qemu模拟器
 QEMU = qemu-system-riscv32
-QFLAGS = -nographic -smp 1 -machine virt -bios none
-
+QFLAGS = -nographic -smp 1 -machine virt -bios none -machine virt -bios none
 #gdb
 GDB = gdb-multiarch
 
@@ -65,10 +64,18 @@ run: all
 	@${QEMU} -M ? | grep virt >/dev/null || exit
 	@echo "\033[32m先按 Ctrl+A 再按 X 退出 QEMU"
 	@echo "------------------------------------\033[0m"
-	@${QEMU} ${QFLAGS} -kernel $(TARGET)
+	@${QEMU} ${QFLAGS} -kernel $(TARGET) 
 
 
 .PHONY:debug
 debug:all	
-	@${QEMU} ${QFLAGS} -kernel $(TARGET) -s -S &
+	@${QEMU} ${QFLAGS} -kernel $(TARGET)  -s -S &
 	@${GDB}  ${TARGET} -tui -q -x ./gdbinit 
+
+.PHONY:qemu
+qemu:all
+	qemu-system-riscv32 -nographic -smp 1 -machine virt -bios none -machine virt -bios none -kernel ./out/os.elf -s -S 
+	
+.PHONY:gdb
+gdb:all
+	gdb-multiarch ./out/os.elf -tui -q -x ./gdbinit
