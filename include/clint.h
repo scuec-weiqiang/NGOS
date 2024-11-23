@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-11-13 18:42:21
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 19:48:44
+ * @LastEditTime: 2024-11-13 23:39:45
  * @FilePath: /my_code/include/clint.h
  * @Description: 
  * @
@@ -13,12 +13,10 @@
 
 #include "types.h"
 
-#define CLINT_TIMEBASE_FREQ 10000000
-
 #define CLINT_BASE          0x02000000
 
 #define CLINT_MTIME                 (CLINT_BASE + (0xbff8))
-#define CLINT_MTIMECMP(hartid)      (CLINT_BASE  + (0x4000)+ 8*(hartid))
+#define CLINT_MTIMECMP(hartid)      (CLINT_BASE + (0x4000)+ 8*(hartid))
 
 __SELF __INLINE uint64_t __clint_mtime_get()
 {

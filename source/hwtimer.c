@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-11-13 19:49:17
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 20:25:50
+ * @LastEditTime: 2024-11-13 23:32:27
  * @FilePath: /my_code/source/hwtimer.c
  * @Description: 
  * @

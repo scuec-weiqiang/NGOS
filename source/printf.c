@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-25 15:57:18
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 20:23:33
+ * @LastEditTime: 2024-11-22 18:54:53
  * @FilePath: /my_code/source/printf.c
  * @Description: 
  * @
@@ -93,7 +93,7 @@ int _vsprintf(char* out_buff,const char *str,va_list vl)
                 case 'b':decimal = 2;goto DEC;
                 case 'd':
                     DEC://整数输出
-                    long long num = longarg?va_arg(vl,long long):va_arg(vl,int);
+                    long num = longarg?va_arg(vl,long):va_arg(vl,int);
                     if(0 == decimal)
                     {
                         decimal = 10;

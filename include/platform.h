@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-12 16:19:07
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 00:22:44
+ * @LastEditTime: 2024-11-15 17:08:08
  * @FilePath: /my_code/include/platform.h
  * @Description: 
  * @
@@ -19,6 +19,8 @@
 #define HART0 0
 
 #define UART0_IRQN 10
+
+#define CLINT_TIMEBASE_FREQ 10000000
 
 /****************************************************************************/
 

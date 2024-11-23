@@ -81,20 +81,20 @@
 
 .macro interrupt_save
     csrrw t6,mscratch,t6
-    bne t6, zero, 1f //mscratch值是正常的，直接跳转到保存上下文的地方
+    # bne t6, zero, 1f //mscratch值是正常的，直接跳转到保存上下文的地方
  
-    addi sp,sp,-4
-    sw a0,(sp)//暂时先将a0压栈，他要用来传参
+    # addi sp,sp,-4
+    # sw a0,(sp)//暂时先将a0压栈，他要用来传参
 
-    li a0,1
-    call page_alloc
-    csrw mscratch,a0//当mscratch=0，给它分配一片内存用来存上下文
-    mv t6,a0
+    # li a0,1
+    # call page_alloc
+    # csrw mscratch,a0//当mscratch=0，给它分配一片内存用来存上下文
+    # mv t6,a0
 
-    lw a0,(sp)//将a0出栈
-    addi sp,sp,4
+    # lw a0,(sp)//将a0出栈
+    # addi sp,sp,4
 
-    1:
+    # 1:
     store_reg t6
     csrr t5,mscratch
     STORE t5,31*REG_SIZE(t6)#保存t6的值

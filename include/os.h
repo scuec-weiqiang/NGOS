@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-16 09:43:32
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 19:59:11
+ * @LastEditTime: 2024-11-13 23:50:32
  * @FilePath: /my_code/include/os.h
  * @Description: 
  * @
@@ -15,8 +15,8 @@
 #include "printf.h"
 #include "page.h"
 #include "sched.h"
-#include "exception.h"
 #include "hwtimer.h"
-#include "clint.h"
+#include "interrupt.h"
+
 
 #endif

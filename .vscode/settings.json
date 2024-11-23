@@ -12,7 +12,8 @@
         "riscv.h": "c",
         "plic.h": "c",
         "clint.h": "c",
-        "exception.h": "c"
+        "exception.h": "c",
+        "cstdint": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-14 09:17:08
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-09 20:19:50
+ * @LastEditTime: 2024-11-22 16:22:09
  * @FilePath: /my_code/include/types.h
  * @Description: 
  * @
@@ -29,17 +29,18 @@
     #endif 
 
     #if 32==SYSTEM_BITS
-        typedef char             int8_t;
-        typedef unsigned char    uint8_t;
-        typedef short            int16_t;
-        typedef unsigned short   uint16_t;       
-        typedef int              int32_t;
-        typedef unsigned int     uint32_t;
-        typedef long long        uint64_t;
-        typedef uint64_t         max_uint_t;
-        typedef uint32_t         addr_t;
-        typedef uint32_t         size_t;
-        typedef uint32_t         reg_t;
+        typedef char                 int8_t;
+        typedef unsigned char        uint8_t;
+        typedef short                int16_t;
+        typedef unsigned short       uint16_t;       
+        typedef int                  int32_t;
+        typedef unsigned int         uint32_t;
+        typedef long long            int64_t;
+        typedef unsigned long long   uint64_t;
+        typedef uint64_t             max_uint_t;
+        typedef uint32_t             addr_t;
+        typedef uint32_t             size_t;
+        typedef uint32_t             reg_t;
     #endif 
     
     #if 16==SYSTEM_BITS

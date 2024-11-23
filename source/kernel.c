@@ -2,36 +2,39 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-12 16:19:16
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 20:32:54
+ * @LastEditTime: 2024-11-22 22:06:10
  * @FilePath: /my_code/source/kernel.c
  * @Description:
  * @
  * @Copyright (c) 2024 by  weiqiang scuec_weiqiang@qq.com , All Rights Reserved.
  ***************************************************************/
 #include "os.h"
-void task0()
-{
-    printf("\ntask0 running\n");
-    task_delay(25);
 
-}
+char welcome[] = " \
+  ***     **\n \
+  ** *    **\n \
+  **  *   **\n \
+  **   *  **\n \
+  **    * **\n \
+Welcom To NGOS!\n"; \
 
-void task1()
-{
-    printf("\ntask1 running....\n");
-    task_delay(25);
-}
-
+extern void os_main();
 
 void start_kernel() 
 {
     page_init();
-    sched_init();
-    hwtimer_load(CLINT_TIMEBASE_FREQ);
-    timer_interupt_init();
-    extern_interupt_init(HART0,UART0_IRQN,1);
-    task_create(task0);
-    task_create(task1);
+
+    hwtimer_ms(1000);
+    timer_interupt_enable();
+    
+    extern_interupt_enable();
+    extern_interupt_setting(HART0,UART0_IRQN,1);
+
+    global_interrupt_enable();
+
+    printf(welcome);
+    
+    os_main();
     task_run();
 }
 

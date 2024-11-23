@@ -1,4 +1,4 @@
-#include "save_reg.h"
+#include "save_reg.S"
 
 .text
 .global __switch_to 
@@ -8,6 +8,7 @@ __switch_to:
     csrrw t6,mscratch,t6 
     beq t6, zero, 1f # 如果mscratch值为0，则代表当前没有任务上下文需要保存（例如：第一个任务还没开始执行）
     store_reg t6
+   
     csrr t5,mscratch #把原来t6的值放入t5
     STORE t5,31*REG_SIZE(t6)#再把原来t6的值存入结构体中
 # 至此保存当前任务上下文完成，下面恢复下一个任务的上下文
@@ -21,4 +22,4 @@ __switch_to:
     #注意：这里如果不用t6（比如直接用a0）,那么在执行宏 load_reg a0 时会执行 LOAD a0 ,18*REG_SIZE(a0)，
     #从此之后a0值会被覆盖掉，后面的操作都是从错误的地址加载值到寄存器，因此要保证宏load_reg的参数对应的寄存器最后被覆盖
     ret
-.end
+    .end

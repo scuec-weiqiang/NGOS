@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-31 12:22:31
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 16:07:33
+ * @LastEditTime: 2024-11-22 22:42:58
  * @FilePath: /my_code/source/sched.c
  * @Description: 
  * @
@@ -50,62 +50,106 @@ typedef struct reg_context
     reg_t t4 ;
     reg_t t5 ;
     reg_t t6 ;
+    // reg_t mepc ;
 }reg_context_t;
 
-//此函数定义在switch.S文件中
-extern void __switch_to(reg_context_t* next);
-
 typedef struct task_ctrl_block
-{
+{   
+    uint32_t id;
     void (*task)();
     reg_context_t reg_context;
     uint8_t  __attribute__((aligned(16))) task_stack[TASK_STACK_SIZE];
     list_t task_node;
 }tcb_t;
+tcb_t* task_head = NULL_PTR;
+tcb_t* task_current = NULL_PTR;
 
+reg_context_t sched_context;
+uint8_t  __attribute__((aligned(16))) sched_stack[1];
+
+//此函数定义在switch.S文件中
+extern void __switch_to(reg_context_t* next);
+
+
+/***************************************************************
+ * @description: 
+ * @param {volatile int} count [in/out]:  
+ * @return {*}
+***************************************************************/
 void task_delay(volatile int count)
 {
 	count *= 50000;
 	while (count--);
 }
 
-void task_default()
+/***************************************************************
+ * @description: 
+ * @return {*}
+***************************************************************/
+void sched()
 {
-	
+    task_current = list_entry(task_current->task_node.next,tcb_t,task_node); 
+    __switch_to(&task_current->reg_context); 
 }
 
-tcb_t task_head;
-
-void sched_init()
-{
-    task_head.task = task_default;
-    // task_head.reg_context.ra = task_default;
-    task_head.reg_context.sp = task_head.task_stack;
-    INIT_LIST_HEAD(&task_head.task_node);
-}
-
+/***************************************************************
+ * @description: 
+ * @return {*}
+***************************************************************/
 void task_create(void (*task)(void))
 {   
     tcb_t* task_ctrl_block = page_alloc(1);
-    task_ctrl_block->task = task;
-    // task_ctrl_block->reg_context.ra = task;
-    task_ctrl_block->reg_context.sp = task_ctrl_block->task_stack;
-    
-    list_add_tail(&task_head.task_node,&task_ctrl_block->task_node);
+
+    switch ((uint32_t)task_head)
+    {
+        case (uint32_t)NULL_PTR://第一次创建任务，将其作为头节点
+            static uint32_t id = 0;
+
+            sched_context.ra = sched;//初始化调度器
+            sched_context.sp = &sched_stack[0];
+
+            task_head = task_ctrl_block;
+            INIT_LIST_HEAD(&task_head->task_node);
+
+        default:
+            task_ctrl_block->id = id;
+            task_ctrl_block->task = task;
+            task_ctrl_block->reg_context.ra = (uint32_t)task;
+            task_ctrl_block->reg_context.sp = (uint32_t)&task_ctrl_block->task_stack[TASK_STACK_SIZE-1];
+            list_add_tail(&task_head->task_node,&task_ctrl_block->task_node);
+            id++;
+        break;
+    }
+
+}
+
+void task_distory(void (*task)(void))
+{
+    tcb_t* node = list_entry(task,tcb_t,task);
+    list_del(&node->task_node);
+    page_free(node);
 }
 
 void task_run()
 {   
-    tcb_t* pos = &task_head;
-    asm volatile("csrw mscratch,%0": :"r"(&(pos->reg_context)));
-    while(1)
+    if(NULL_PTR != task_head)
     {
-        pos->task();
-        // __switch_to(&((list_entry(pos->task_node.next,tcb_t,task_node))->reg_context));
-        pos = list_entry(pos->task_node.next,tcb_t,task_node);
+        task_current = task_head;
+        __switch_to(&task_current->reg_context);
     }
-    
+    panic("\n  no task to exec!");
 }
+        
+
+
+// p /x *task_ctrl_block
+
+// t0 0x8000c000
+// t1 0x8000d000
+
+// x /1xw 0x8000c07c
+//x /1xw 0x8000c07c
+
 
 
 

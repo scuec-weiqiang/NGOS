@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-31 16:30:19
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 16:05:37
+ * @LastEditTime: 2024-11-22 21:57:56
  * @FilePath: /my_code/include/sched.h
  * @Description: 
  * @
@@ -13,8 +13,20 @@
 
 #include "types.h"
 
-extern void sched_init();
+typedef struct task_ctrl_block tcb_t;
+
+extern tcb_t* task_head ;
+extern tcb_t* task_current;
+
+typedef struct reg_context reg_context_t;
+extern reg_context_t sched_context;
+extern uint8_t sched_stack[1];
+
+#define back2kernel __switch_to(&sched_context)
+
 extern void task_create(void (*task)(void));
+extern void task_distory(void (*task)(void));
 extern void task_run();
 extern void task_delay(volatile int count);
+
 #endif

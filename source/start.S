@@ -3,9 +3,6 @@
 #注意，这里在预处理.S文件时，指定参数“-c”,强制把.S文件当作.c文件，#include 命令就会强制展开
 .equ STACK_SIZE,1024
 
-.data
-welcome:.string "  ***     **\n  ** *    **\n  **  *   **\n  **   *  **\n  **    * **\nWelcom To NGOS!\n"
-
 .section .text.entry
 .global _start
 _start:
@@ -33,17 +30,10 @@ _start:
     ori a0,a0,0x01
     csrw mtvec,a0
 
-    # 开启全局中断
-    li a0,0x08
-    csrw mstatus,a0
-
     li a0,0
     csrw mscratch,a0
 
     call uart_init#基本输入输出初始化
-
-    la a0,welcome
-    call printf#打印欢迎
 
     j start_kernel
 
@@ -95,11 +85,21 @@ end_extern_interrupt_handler:
 
 .global _timer_interrupt_handler
 _timer_interrupt_handler:
-    interrupt_save
+    csrrw t6,mscratch,t6
+    # beq t6, zero, 1f 
+
+    store_reg t6
+    csrr t5,mscratch
+    STORE t5,31*REG_SIZE(t6)#保存t6的值
+    csrw mscratch,t6    #保持mscratch值不变
+1:  
     csrr a0,mepc
     call timer_interrupt_handler
     csrw mepc,a0
-    interrupt_load
+
+    csrr t6,mscratch
+    load_reg t6
+
     mret
 end_timer_interrupt_handler:
 ######################################################
