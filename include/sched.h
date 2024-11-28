@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-31 16:30:19
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-22 21:57:56
+ * @LastEditTime: 2024-11-28 16:29:58
  * @FilePath: /my_code/include/sched.h
  * @Description: 
  * @
@@ -21,8 +21,6 @@ extern tcb_t* task_current;
 typedef struct reg_context reg_context_t;
 extern reg_context_t sched_context;
 extern uint8_t sched_stack[1];
-
-#define back2kernel __switch_to(&sched_context)
 
 extern void task_create(void (*task)(void));
 extern void task_distory(void (*task)(void));

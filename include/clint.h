@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-11-13 18:42:21
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 23:39:45
+ * @LastEditTime: 2024-11-28 16:44:32
  * @FilePath: /my_code/include/clint.h
  * @Description: 
  * @
@@ -17,6 +17,10 @@
 
 #define CLINT_MTIME                 (CLINT_BASE + (0xbff8))
 #define CLINT_MTIMECMP(hartid)      (CLINT_BASE + (0x4000)+ 8*(hartid))
+
+#define CLINT_MSIP(hartid)          (CLINT_BASE + 4*(hartid))
+
+#define RELEASE_CORE(hartid)        (*(uint32_t*)CLINT_MSIP(hartid)=1)
 
 __SELF __INLINE uint64_t __clint_mtime_get()
 {

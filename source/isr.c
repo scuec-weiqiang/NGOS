@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-11-13 23:13:53
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-22 22:42:43
+ * @LastEditTime: 2024-11-28 16:40:05
  * @FilePath: /my_code/source/isr.c
  * @Description: 
  * @
@@ -18,6 +18,9 @@
 
 #include "types.h"
 #include "riscv.h"
+
+extern void __sw_without_save(reg_context_t* next);
+
 /***************************************************************
  * @description: 
  * @return {*}
@@ -83,10 +86,15 @@ uint32_t timer_interrupt_handler(uint32_t mepc)
 {
     __tick++;
     hwtimer_ms(1000);
+    printf("\n");
     printf("%l\r\n",__tick);
-    // back2kernel;
+    __sw_without_save(&sched_context);
     return mepc+4;
 }
 
-
+void  soft_interrupt_handler()
+{
+    *(uint32_t*)CLINT_MSIP(0)=0;
+    __sw_without_save(&sched_context);
+}
 

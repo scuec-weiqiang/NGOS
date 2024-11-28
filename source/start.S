@@ -35,8 +35,11 @@ _start:
 
     call uart_init#基本输入输出初始化
 
-    j start_kernel
-
+    li a0,0x1880
+    csrw mstatus,a0
+    la a0,start_kernel
+    csrw mepc,a0
+    mret
 park:   #hart id 不为0的将休眠
     wfi
     j park 
@@ -49,7 +52,7 @@ _trap_vector:
     j _trap_handler
     .skip  4
     .skip  4
-    .skip  4
+    j _soft_interrupt_handler
     .skip  4
     .skip  4
     .skip  4
@@ -58,8 +61,6 @@ _trap_vector:
     .skip  4
     .skip  4
     j _extern_interrupt_handler
-end__trap_vector:
-
 
 .global _trap_handler
 _trap_handler:
@@ -69,7 +70,6 @@ _trap_handler:
     csrw mepc,a0
     interrupt_load
     mret
-end_trap_handler:#这里加这个标号纯粹时为了编辑器方便折叠,可以删掉
 
 
 .global _extern_interrupt_handler
@@ -80,28 +80,24 @@ _extern_interrupt_handler:
     csrw mepc,a0
     interrupt_load
     mret
-end_extern_interrupt_handler:
-
 
 .global _timer_interrupt_handler
 _timer_interrupt_handler:
-    csrrw t6,mscratch,t6
-    # beq t6, zero, 1f 
-
-    store_reg t6
-    csrr t5,mscratch
-    STORE t5,31*REG_SIZE(t6)#保存t6的值
-    csrw mscratch,t6    #保持mscratch值不变
-1:  
+    interrupt_save
     csrr a0,mepc
     call timer_interrupt_handler
     csrw mepc,a0
-
-    csrr t6,mscratch
-    load_reg t6
-
+    interrupt_load
     mret
-end_timer_interrupt_handler:
+
+.global _soft_interrupt_handler
+_soft_interrupt_handler:
+    interrupt_save
+    csrr a0,mepc
+    call soft_interrupt_handler
+    csrw mepc,a0
+    interrupt_load
+    mret
 ######################################################
 
 .balign 16

@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-11-11 18:41:39
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 19:39:17
+ * @LastEditTime: 2024-11-27 19:51:12
  * @FilePath: /my_code/include/riscv.h
  * @Description: 
  * 
@@ -14,6 +14,13 @@
 
 #include "types.h"
 
+__SELF __INLINE reg_t mhartid_r()
+{
+    reg_t a;
+    asm volatile("csrr a0,mhartid");
+    asm volatile("mv %0,a0":"=r"(a));
+    return a;
+}
 /***************************************************************
  * @description: 
  * @return {*}

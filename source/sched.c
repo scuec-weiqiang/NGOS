@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-31 12:22:31
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-22 22:42:58
+ * @LastEditTime: 2024-11-28 16:36:19
  * @FilePath: /my_code/source/sched.c
  * @Description: 
  * @
@@ -50,7 +50,7 @@ typedef struct reg_context
     reg_t t4 ;
     reg_t t5 ;
     reg_t t6 ;
-    // reg_t mepc ;
+    reg_t mepc ;
 }reg_context_t;
 
 typedef struct task_ctrl_block
@@ -65,12 +65,11 @@ tcb_t* task_head = NULL_PTR;
 tcb_t* task_current = NULL_PTR;
 
 reg_context_t sched_context;
-uint8_t  __attribute__((aligned(16))) sched_stack[1];
+uint8_t  __attribute__((aligned(16))) sched_stack[32];
 
 //此函数定义在switch.S文件中
-extern void __switch_to(reg_context_t* next);
-
-
+extern void __sw_save(reg_context_t* next);
+extern void __sw_without_save(reg_context_t* next);
 /***************************************************************
  * @description: 
  * @param {volatile int} count [in/out]:  
@@ -89,7 +88,7 @@ void task_delay(volatile int count)
 void sched()
 {
     task_current = list_entry(task_current->task_node.next,tcb_t,task_node); 
-    __switch_to(&task_current->reg_context); 
+    __sw_save(&task_current->reg_context); 
 }
 
 /***************************************************************
@@ -106,7 +105,8 @@ void task_create(void (*task)(void))
             static uint32_t id = 0;
 
             sched_context.ra = sched;//初始化调度器
-            sched_context.sp = &sched_stack[0];
+            sched_context.mepc = sched_context.ra;
+            sched_context.sp = &sched_stack[31];
 
             task_head = task_ctrl_block;
             INIT_LIST_HEAD(&task_head->task_node);
@@ -115,6 +115,7 @@ void task_create(void (*task)(void))
             task_ctrl_block->id = id;
             task_ctrl_block->task = task;
             task_ctrl_block->reg_context.ra = (uint32_t)task;
+            task_ctrl_block->reg_context.mepc = task_ctrl_block->reg_context.ra;
             task_ctrl_block->reg_context.sp = (uint32_t)&task_ctrl_block->task_stack[TASK_STACK_SIZE-1];
             list_add_tail(&task_head->task_node,&task_ctrl_block->task_node);
             id++;
@@ -135,7 +136,7 @@ void task_run()
     if(NULL_PTR != task_head)
     {
         task_current = task_head;
-        __switch_to(&task_current->reg_context);
+        __sw_without_save(&task_current->reg_context);
     }
     panic("\n  no task to exec!");
 }

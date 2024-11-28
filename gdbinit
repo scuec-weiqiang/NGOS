@@ -1,9 +1,10 @@
 set disassemble-next-line on
-
+layout split
 b _start
-b start.S:97
-b kernel.c:30
-b exception.c:62
-b isr.c:83
+b sched.c:89
+b user.c:15
+b user.c:30
+b user.c:24
+b isr.c:94
 target remote :1234
 c

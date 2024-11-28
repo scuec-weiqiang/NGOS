@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-11-12 23:18:55
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-13 23:50:57
+ * @LastEditTime: 2024-11-27 23:20:09
  * @FilePath: /my_code/source/interrupt.c
  * @Description: 
  * @
@@ -37,7 +37,7 @@ void global_interrupt_disable()
  * @description: 开启内核tick定时器中断
  * @return {*}
 ***************************************************************/
-void timer_interupt_enable()
+void timer_interrupt_enable()
 {
     mie_w(mie_r()|0x80);
 }
@@ -46,7 +46,7 @@ void timer_interupt_enable()
  * @description: 关闭内核tick定时器中断
  * @return {*}
 ***************************************************************/
-void timer_interupt_disable()
+void timer_interrupt_disable()
 {
     mie_w(mie_r()&(~0x80));
 }
@@ -55,7 +55,7 @@ void timer_interupt_disable()
  * @description: 开启外部中断
  * @return {*}
 ***************************************************************/
-void extern_interupt_enable()
+void extern_interrupt_enable()
 {
     mie_w(mie_r()|0x800);
 }
@@ -64,10 +64,11 @@ void extern_interupt_enable()
  * @description: 关闭外部中断
  * @return {*}
 ***************************************************************/
-void extern_interupt_disable()
+void extern_interrupt_disable()
 {
     mie_w(mie_r()&(~0x800));
 }
+
 
 /***************************************************************
  * @description: 外部中断设置
@@ -76,7 +77,7 @@ void extern_interupt_disable()
  * @param {uint32_t} priority [in]:  外部中断的优先级
  * @return {*}
 ***************************************************************/
-void extern_interupt_setting(uint32_t hart,uint32_t iqrn,uint32_t priority)
+void extern_interrupt_setting(uint32_t hart,uint32_t iqrn,uint32_t priority)
 { 
     __plic_priority_set(iqrn,priority);
     __plic_threshold_set(hart,0);
@@ -84,4 +85,20 @@ void extern_interupt_setting(uint32_t hart,uint32_t iqrn,uint32_t priority)
 } 
 
 
+/***************************************************************
+ * @description: 开启soft中断
+ * @return {*}
+***************************************************************/
+void soft_interrupt_enable()
+{
+    mie_w(mie_r()|0x08);
+}
 
+/***************************************************************
+ * @description: 关闭soft中断
+ * @return {*}
+***************************************************************/
+void soft_interrupt_disable()
+{
+    mie_w(mie_r()&(~0x08));
+}
