@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-31 12:22:31
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-28 16:36:19
+ * @LastEditTime: 2024-11-30 17:40:09
  * @FilePath: /my_code/source/sched.c
  * @Description: 
  * @
@@ -55,10 +55,12 @@ typedef struct reg_context
 
 typedef struct task_ctrl_block
 {   
+    uint32_t time_slice;
     uint32_t id;
-    void (*task)();
+    uint8_t priority;
     reg_context_t reg_context;
     uint8_t  __attribute__((aligned(16))) task_stack[TASK_STACK_SIZE];
+    void (*task)();
     list_t task_node;
 }tcb_t;
 tcb_t* task_head = NULL_PTR;
@@ -88,14 +90,14 @@ void task_delay(volatile int count)
 void sched()
 {
     task_current = list_entry(task_current->task_node.next,tcb_t,task_node); 
-    __sw_save(&task_current->reg_context); 
+    __sw_save(&task_current->reg_context);
 }
 
 /***************************************************************
  * @description: 
  * @return {*}
 ***************************************************************/
-void task_create(void (*task)(void))
+void task_create(void (*task)(void),uint64_t time_slice,uint8_t priority)
 {   
     tcb_t* task_ctrl_block = page_alloc(1);
 
@@ -103,11 +105,10 @@ void task_create(void (*task)(void))
     {
         case (uint32_t)NULL_PTR://第一次创建任务，将其作为头节点
             static uint32_t id = 0;
-
-            sched_context.ra = sched;//初始化调度器
+            sched_context.ra = (reg_t)sched;//初始化调度器
             sched_context.mepc = sched_context.ra;
-            sched_context.sp = &sched_stack[31];
-
+            sched_context.sp = (reg_t)&sched_stack[31];
+            
             task_head = task_ctrl_block;
             INIT_LIST_HEAD(&task_head->task_node);
 
@@ -117,6 +118,8 @@ void task_create(void (*task)(void))
             task_ctrl_block->reg_context.ra = (uint32_t)task;
             task_ctrl_block->reg_context.mepc = task_ctrl_block->reg_context.ra;
             task_ctrl_block->reg_context.sp = (uint32_t)&task_ctrl_block->task_stack[TASK_STACK_SIZE-1];
+            task_ctrl_block->priority = priority;
+            task_ctrl_block->time_slice = time_slice;
             list_add_tail(&task_head->task_node,&task_ctrl_block->task_node);
             id++;
         break;
@@ -124,6 +127,10 @@ void task_create(void (*task)(void))
 
 }
 
+/***************************************************************
+ * @description: 
+ * @return {*}
+***************************************************************/
 void task_distory(void (*task)(void))
 {
     tcb_t* node = list_entry(task,tcb_t,task);
@@ -131,6 +138,10 @@ void task_distory(void (*task)(void))
     page_free(node);
 }
 
+/***************************************************************
+ * @description: 
+ * @return {*}
+***************************************************************/
 void task_run()
 {   
     if(NULL_PTR != task_head)

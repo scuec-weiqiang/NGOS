@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-11-13 23:13:53
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-28 16:40:05
+ * @LastEditTime: 2024-11-30 17:40:13
  * @FilePath: /my_code/source/isr.c
  * @Description: 
  * @
@@ -84,15 +84,21 @@ uint32_t __tick = 0;
 ***************************************************************/
 uint32_t timer_interrupt_handler(uint32_t mepc)
 {
-    __tick++;
-    hwtimer_ms(1000);
-    printf("\n");
-    printf("%l\r\n",__tick);
-    __sw_without_save(&sched_context);
+    hwtimer_ms(1);
+    if(NULL_PTR != task_current)
+    {
+        __tick++;
+        if( __tick >= *((uint32_t*)task_current))
+        {
+            __tick = 0;
+            // printf("\n");
+            __sw_without_save(&sched_context);
+        }
+    }
     return mepc+4;
 }
 
-void  soft_interrupt_handler()
+void soft_interrupt_handler()
 {
     *(uint32_t*)CLINT_MSIP(0)=0;
     __sw_without_save(&sched_context);

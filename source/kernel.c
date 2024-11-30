@@ -2,7 +2,7 @@
  * @Author: weiqiang scuec_weiqiang@qq.com
  * @Date: 2024-10-12 16:19:16
  * @LastEditors: weiqiang scuec_weiqiang@qq.com
- * @LastEditTime: 2024-11-28 16:40:18
+ * @LastEditTime: 2024-11-30 17:17:13
  * @FilePath: /my_code/source/kernel.c
  * @Description:
  * @
@@ -10,6 +10,7 @@
  ***************************************************************/
 #include "os.h"
 #include "clint.h"
+
 char welcome[] = " \
   ***     **\n \
   ** *    **\n \
@@ -22,22 +23,22 @@ extern void os_main();
 
 void start_kernel() 
 {
+    printf(welcome);
+
     page_init();
 
-    hwtimer_ms(1000);
-    timer_interrupt_enable();
-    
-    // extern_interrupt_enable();
-    // extern_interrupt_setting(HART0,UART0_IRQN,1);
-
-    soft_interrupt_enable();
     global_interrupt_enable();
 
-    printf(welcome);
+    soft_interrupt_enable();
+
+    extern_interrupt_enable();
+    extern_interrupt_setting(HART0,UART0_IRQN,1);
     
-    
+    hwtimer_ms(1);
+    timer_interrupt_enable();
+
     os_main();
-    task_run();
+    
 }
 
 //info registers mscratch
